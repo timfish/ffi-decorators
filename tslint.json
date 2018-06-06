@@ -1,0 +1,61 @@
+{
+  "extends": ["tslint:all", "tslint-config-prettier"],
+  "rules": {
+    // This rule has side effects and must be disabled
+    "no-unused-variable": false,
+
+    // We don't want these
+    "newline-before-return": false,
+    "no-any": false,
+    "no-magic-numbers": false,
+    "no-parameter-properties": false,
+    "prefer-function-over-method": [false],
+    "strict-boolean-expressions": false,
+    "no-import-side-effect": false,
+    "max-classes-per-file": false,
+
+    // tslint appears to error with these:
+    "promise-function-async": false,
+    "no-inferred-empty-object-type": false,
+
+    // These are too strict in tslint:all
+    "no-unsafe-any": false,
+    "comment-format": [true, "check-space"],
+    "completed-docs": [
+      true,
+      {
+        "classes": { "visibilities": ["exported"] },
+        "enums": { "visibilities": ["exported"] },
+        "enum-members": true,
+        "functions": { "visibilities": ["exported"] },
+        "interfaces": { "visibilities": ["exported"] },
+        "methods": {
+          "tags": { "content": {}, "existence": ["inheritDoc"] },
+          "privacies": ["public"]
+        },
+        "properties": {
+          "tags": { "content": {}, "existence": ["inheritDoc"] },
+          "privacies": ["public"]
+        }
+      }
+    ],
+    "member-ordering": [true, "statics-first"],
+    "no-console": [true, "log"],
+    "only-arrow-functions": [true, "allow-named-functions"],
+    "typedef": [
+      true,
+      "call-signature",
+      "parameter",
+      "property-declaration",
+      "member-variable-declaration"
+    ],
+    "array-type": [true, "array"],
+    "no-inferrable-types": false,
+    "variable-name": [
+      true,
+      "check-format",
+      "allow-leading-underscore",
+      "ban-keywords"
+    ]
+  }
+}
