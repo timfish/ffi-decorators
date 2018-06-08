@@ -5,35 +5,44 @@ Use [node-ffi](https://github.com/node-ffi/node-ffi) via decorators
 - Automatic 'promisifcation' using ffi `async` feature
 - Automatic handling of callback pointers
 
-Only tested in TypeScript, PRs welcome!
+Only tested in TypeScript where you'll need this in your `tsconfig.json`:
+
+```json
+  "compilerOptions": {
+    //...
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    //...
+  }
+```
 
 ```typescript
-import { Callback, Library, Method, never } from "ffi-decorators";
+import { Callback, Library, Method, never } from 'ffi-decorators';
 
-@Library({ libPath: "libmylibrary" })
+@Library({ libPath: 'libmylibrary' })
 class MyLibrary {
   constructor(path?: string) { }
 
-  @Method({ types: ["double", ["double", "int"]] })
+  @Method({ types: ['double', ['double', 'int']] })
   do_some_number_fudging(a: number, b: number): number {
     return never();
   }
 
-  @Method({ types: ["double", ["double", "int"]] })
+  @Method({ types: ['double', ['double', 'int']] })
   do_long_running_thing(input: number, length: number): Promise<number> {
     return never();
   }
 
-  @Method({ types: ["void", ["short", "pointer"]] })
+  @Method({ types: ['void', ['short', 'pointer']] })
   something_with_callback(
     handle: number,
-    @Callback({ types: ["void", ["int"]] })
+    @Callback({ types: ['void', ['int']] })
     cb: (result: number) => void
   ): void {
     return never();
   }
 
-  @Method({ nativeName: 'specific_name', types: ["double", ["double"]] })
+  @Method({ nativeName: 'specific_name', types: ['double', ['double']] })
   whateverYouLike(a: number): number {
     return never();
   }
