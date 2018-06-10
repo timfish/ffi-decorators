@@ -10,9 +10,8 @@ export class PromisePlugin implements Partial<IPlugin> {
   private readonly wrapPromise: boolean;
 
   public constructor(target: object, method: string) {
-    this.wrapPromise =
-      Reflect.getMetadata("design:returntype", target, method).name ===
-      "Promise";
+    const meta = Reflect.getMetadata("design:returntype", target, method);
+    this.wrapPromise = meta && meta.name === "Promise";
   }
 
   /**
