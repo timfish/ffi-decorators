@@ -1,5 +1,7 @@
 # ffi-decorators
-Use [node-ffi](https://github.com/node-ffi/node-ffi) via decorators 
+Use [node-ffi](https://github.com/node-ffi/node-ffi) via decorators.
+
+I got tiresome maintaining separate type declarations for all our `node-ffi` code. This library has made things a little less painful so hopefully it can be useful to others.
 
 - Typed calls to native libraries  
 - Automatic 'promisifcation' using ffi `async` feature
@@ -15,6 +17,8 @@ Only tested in TypeScript where you'll need this in your `tsconfig.json`:
     //...
   }
 ```
+
+> **Note:** `ffi` is a peer dependency so you'll need to install a version which is compatible with your node version.
 
 ```typescript
 import { Callback, Library, Method, never } from 'ffi-decorators';
