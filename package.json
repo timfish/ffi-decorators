@@ -2,7 +2,7 @@
   "name": "ffi-decorators",
   "description": "Use node-ffi via decorators",
   "author": "Tim Fish <tim@timfish.uk>",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "license": "MIT",
   "repository": "https://github.com/timfish/ffi-decorators.git",
   "main": "dist/index.js",

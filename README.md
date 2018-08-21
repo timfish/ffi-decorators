@@ -1,20 +1,20 @@
 # ffi-decorators
 Use [node-ffi](https://github.com/node-ffi/node-ffi) via decorators.
 
-I got tiresome maintaining separate type declarations for all our `node-ffi` code. This library has made things a little less painful so hopefully it can be useful to others.
+It got tiresome maintaining separate type declarations and mappings for all our `node-ffi` code. This library has made things a little less painful so hopefully it can be useful to others.
+
+It gives you:
 
 - Typed calls to native libraries  
-- Automatic 'promisifcation' using ffi `async` feature
-- Automatic handling of callback pointers
+- Automatic 'promisifcation' using the ffi `async` feature
+- Automatic handling of callback pointer lifetime
 
-Only tested in TypeScript where you'll need this in your `tsconfig.json`:
+Only tested in TypeScript where you'll need these options enabling in your `tsconfig.json`:
 
 ```json
   "compilerOptions": {
-    //...
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    //...
   }
 ```
 
@@ -57,10 +57,10 @@ const myLib = new MyLibrary();
 myLib.do_some_number_fudging(10, 546);
 
 // do_long_running_thing returns a promise so 
-// this automatically uses ffi async feature
+// this automatically uses the ffi async feature
 const result = await myLib.do_long_running_thing(95, 9);
 
-// Callback pointers and caching to avoid GC is automatic
+// Callback pointers are cached to avoid GC
 myLib.something_with_callback(5, (res) => {
   console.log(res);
 })
