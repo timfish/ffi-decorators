@@ -1,9 +1,18 @@
 import * as ffi from "ffi";
 import { FFITypeList } from "./common";
 
+export function stdCallOnWin32(): number | undefined {
+  return process.platform === "win32" && process.arch === "ia32"
+    ? (ffi as any).FFI_STDCALL
+    : undefined;
+}
+
 /** Base callback strategy */
 export abstract class CallbackStrategy {
-  public constructor(public types: FFITypeList) {}
+  public constructor(
+    public types: FFITypeList,
+    private abi: number | undefined
+  ) {}
 
   protected getWrappedCallback(
     scope: any,
@@ -11,8 +20,11 @@ export abstract class CallbackStrategy {
   ): Buffer {
     const [ret, param] = this.types;
 
+    const abi =
+      this.abi === undefined ? (ffi as any).FFI_DEFAULT_ABI : this.abi;
+
     // tslint:disable-next-line:only-arrow-functions
-    return ffi.Callback(ret, param, function(...args: any[]): any {
+    return ffi.Callback(ret, param, abi, function(...args: any[]): any {
       return func.apply(scope, args);
     });
   }
@@ -66,7 +78,7 @@ export class UntilCalledStrategy extends CallbackStrategy {
 
 /** To enforce callback strategy constructors */
 export interface ICallbackStrategyConstructor {
-  new (types: FFITypeList): CallbackStrategy;
+  new (types: FFITypeList, abi: number | undefined): CallbackStrategy;
 }
 
 // tslint:disable:variable-name

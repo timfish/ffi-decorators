@@ -23,6 +23,11 @@ export interface ICallbackOptions {
    * Strategy for holding onto the callback pointer
    */
   strategy?: ICallbackStrategyConstructor;
+
+  /**
+   * Calling convention
+   */
+  abi?: number;
 }
 
 /**
@@ -62,7 +67,7 @@ export class CallbackPlugin implements Partial<IPlugin> {
       if (options) {
         const strategyType = options.strategy || ReplaceStrategy;
         // save the strategy for
-        this.strategies[i] = new strategyType(options.types);
+        this.strategies[i] = new strategyType(options.types, options.abi);
         // ensure ffi is told this is a pointer type
         mapping[1][i] = "pointer";
       }
