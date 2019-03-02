@@ -1,6 +1,9 @@
+import * as debug from "debug";
 import * as ffi from "ffi";
 import { ITargetConstructor, TargetClassDecorator } from "./common";
 import { getMethodDescriptors, IMethodDescriptors } from "./loader";
+
+const log = debug("ffi-decorators:proxy");
 
 /**
  * Class used to proxy calls to ffi
@@ -18,6 +21,13 @@ export class FFIProxy<T extends { [key: string]: any }>
     if (Object.keys(this.proxied.mappings).length) {
       this.native = ffi.Library(path, this.proxied.mappings);
     }
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public construct(target: T, argArray: any, newTarget?: any): object {
+    return Reflect.construct(target as any, argArray, newTarget);
   }
 
   /**
@@ -48,16 +58,11 @@ export class FFIProxy<T extends { [key: string]: any }>
     target: ITargetConstructor<T>,
     libPath?: string
   ): TargetClassDecorator<T> {
-    function construct(constructor: ITargetConstructor<T>, args: any[]): T {
-      const c: any = function(this: ITargetConstructor<T>): T {
-        return constructor.apply(this, args);
-      };
-      c.prototype = constructor.prototype;
-      return new c();
-    }
+    log("Create", target.name, libPath);
 
-    const f = (...args: any[]) => {
-      const instance = construct(target, args);
+    // tslint:disable-next-line:only-arrow-functions
+    const f = function(...args: any[]): any {
+      const instance = Reflect.construct(target, args);
 
       if (libPath === undefined) {
         if (args.length === 0 || typeof args[0] !== "string") {
@@ -75,7 +80,7 @@ export class FFIProxy<T extends { [key: string]: any }>
       );
     };
 
-    f.prototype = target.prototype;
+    Object.setPrototypeOf(f, target.prototype);
     return f;
   }
 }

@@ -1,9 +1,12 @@
+import * as debug from "debug";
 import * as ffi from "ffi";
 import "reflect-metadata";
 import { FFITypeList, ITargetConstructor } from "./common";
 import { ILibraryOptions, LIBRARY_META } from "./library";
 import { IMethodOptions, METHOD_META } from "./method";
 import { PluginCollection } from "./plugins";
+
+const log = debug("ffi-decorators:loader");
 
 export type WrapMethod = (
   native: { [method: string]: ffi.ForeignFunction },
@@ -39,6 +42,8 @@ export function getMethodDescriptors<T extends object>(
     target
   );
 
+  log("Library meta", libraryMeta);
+
   const jsFunctions = getDecoratedMethods(instance);
   const pluginLoader = new PluginCollection(instance, libraryMeta.plugins);
 
@@ -50,6 +55,8 @@ export function getMethodDescriptors<T extends object>(
       instance,
       jsFuncName
     );
+
+    log("Method meta", jsFuncName, methodMeta);
 
     // Plugins can modify the ffi mappings
     plugins.modifyMappings(methodMeta.types);
@@ -75,13 +82,19 @@ export function getMethodDescriptors<T extends object>(
 
 function getDecoratedMethods(obj: any): string[] {
   const out: string[] = [];
-  for (const key in obj) {
+
+  const methodNames = Object.getOwnPropertyNames(
+    Object.getPrototypeOf(obj)
+  ).filter(m => m !== "constructor");
+
+  for (const func of methodNames) {
     if (
-      key &&
-      typeof obj[key] === "function" &&
-      Reflect.getMetadata(METHOD_META, obj, key)
+      func &&
+      typeof obj[func] === "function" &&
+      Reflect.getMetadata(METHOD_META, obj, func)
     ) {
-      out.push(key);
+      log("Found metadata for method:", func);
+      out.push(func);
     }
   }
   return out;

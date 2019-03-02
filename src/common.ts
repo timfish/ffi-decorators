@@ -1,7 +1,8 @@
+// tslint:disable-next-line:no-implicit-dependencies
+import * as ref from "ref";
+
 /** Interface for target class constructor */
-export interface ITargetConstructor<T> {
-  new (path: string): T;
-}
+export type ITargetConstructor<T> = new (path: string) => T;
 
 export type TargetClassDecorator<T> = (target: ITargetConstructor<T>) => void;
 
@@ -18,4 +19,4 @@ export function never(): never {
  *
  * Example: `['int', ['short', 'pointer']]`
  */
-export type FFITypeList = [string, string[]];
+export type FFITypeList = [string | ref.Type, (string | ref.Type)[]];

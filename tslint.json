@@ -4,6 +4,8 @@
     // This rule has side effects and must be disabled
     "no-unused-variable": false,
 
+    "ordered-imports": [true, { "grouped-imports": false }],
+
     // We don't want these
     "newline-before-return": false,
     "no-any": false,
@@ -13,6 +15,7 @@
     "strict-boolean-expressions": false,
     "no-import-side-effect": false,
     "max-classes-per-file": false,
+    "increment-decrement": false,
 
     // tslint appears to error with these:
     "promise-function-async": false,

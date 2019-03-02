@@ -1,6 +1,7 @@
 import * as ffi from "ffi";
 import { FFITypeList } from "./common";
 
+/** Return the correct calling convention on Win32 */
 export function stdCallOnWin32(): number | undefined {
   return process.platform === "win32" && process.arch === "ia32"
     ? (ffi as any).FFI_STDCALL
@@ -11,7 +12,7 @@ export function stdCallOnWin32(): number | undefined {
 export abstract class CallbackStrategy {
   public constructor(
     public types: FFITypeList,
-    private abi: number | undefined
+    private readonly abi: number | undefined
   ) {}
 
   protected getWrappedCallback(
@@ -43,6 +44,9 @@ export abstract class CallbackStrategy {
 export class ForeverStrategy extends CallbackStrategy {
   private readonly callbacks: Buffer[] = [];
 
+  /**
+   * @inheritDoc
+   */
   public getCallback(func: (...args: any[]) => any): Buffer {
     const callback = super.getWrappedCallback(this, func);
     this.callbacks.push(callback);
@@ -54,8 +58,11 @@ export class ForeverStrategy extends CallbackStrategy {
  * Keep the callback pointer until another callback is supplied
  */
 export class ReplaceStrategy extends CallbackStrategy {
-  private callback: Buffer | undefined;
+  protected callback: Buffer | undefined;
 
+  /**
+   * @inheritDoc
+   */
   public getCallback(func: (...args: any[]) => any): Buffer {
     return (this.callback = super.getWrappedCallback(this, func));
   }
@@ -65,21 +72,28 @@ export class ReplaceStrategy extends CallbackStrategy {
  * Keep the callback pointer until the callback is called or another is supplied
  */
 export class UntilCalledStrategy extends CallbackStrategy {
-  private callback: Buffer | undefined;
+  protected callback: Buffer | undefined;
 
+  /**
+   * @inheritDoc
+   */
   public getCallback(func: (...args: any[]) => any): Buffer {
     return (this.callback = super.getWrappedCallback(this, func));
   }
 
+  /**
+   * @inheritDoc
+   */
   public callbackCalled?(): void {
     this.callback = undefined;
   }
 }
 
 /** To enforce callback strategy constructors */
-export interface ICallbackStrategyConstructor {
-  new (types: FFITypeList, abi: number | undefined): CallbackStrategy;
-}
+export type ICallbackStrategyConstructor = new (
+  types: FFITypeList,
+  abi: number | undefined
+) => CallbackStrategy;
 
 // tslint:disable:variable-name
 

@@ -25,9 +25,10 @@ export interface IPlugin {
 }
 
 /** Interface to type plugin constructors */
-export interface IPluginConstructor {
-  new (target: object, method: string): Partial<IPlugin>;
-}
+export type IPluginConstructor = new (
+  target: object,
+  method: string
+) => Partial<IPlugin>;
 
 /**
  * Aggregates plugins and simplifies calling their methods
