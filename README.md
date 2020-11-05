@@ -1,7 +1,7 @@
 # ffi-decorators
-Use [node-ffi](https://github.com/node-ffi/node-ffi) via decorators.
+Use [node-ffi-napi](https://github.com/node-ffi-napi/node-ffi-napi) via decorators.
 
-It got tiresome maintaining separate type declarations and mappings for all our `node-ffi` code. This library has made things a little less painful so hopefully it can be useful to others.
+It got tiresome maintaining separate type declarations and mappings for all our `node-ffi-napi` code. This library has made things a little less painful so hopefully it can be useful to others.
 
 It gives you:
 
@@ -18,7 +18,7 @@ Only tested in TypeScript where you'll need these options enabling in your `tsco
   }
 ```
 
-> **Note:** `ffi` is a peer dependency so you'll need to install a version which is compatible with your node version.
+> **Note:** `ffi-napi` is a peer dependency so you'll need to install a version which is compatible with your node version.
 
 ```typescript
 import { Callback, Library, Method, never } from 'ffi-decorators';

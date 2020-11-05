@@ -1,33 +1,20 @@
-import * as debug from "debug";
-import * as ffi from "ffi";
-import { ITargetConstructor, TargetClassDecorator } from "./common";
-import { getMethodDescriptors, IMethodDescriptors } from "./loader";
+import * as debug from 'debug';
+import * as ffi from 'ffi-napi';
+import { ITargetConstructor, TargetClassDecorator } from './common';
+import { getMethodDescriptors, IMethodDescriptors } from './loader';
 
-const log = debug("ffi-decorators:proxy");
+const log = debug('ffi-decorators:proxy');
 
 /**
  * Class used to proxy calls to ffi
  */
-export class FFIProxy<T extends { [key: string]: any }>
-  implements ProxyHandler<T> {
-  private readonly native:
-    | { [method: string]: ffi.ForeignFunction }
-    | undefined;
+export class FFIProxy<T extends { [key: string]: any }> implements ProxyHandler<T> {
+  private readonly native: { [method: string]: ffi.ForeignFunction } | undefined;
 
-  private constructor(
-    private readonly proxied: IMethodDescriptors,
-    path: string
-  ) {
+  private constructor(private readonly proxied: IMethodDescriptors, path: string) {
     if (Object.keys(this.proxied.mappings).length) {
       this.native = ffi.Library(path, this.proxied.mappings);
     }
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public construct(target: T, argArray: any, newTarget?: any): object {
-    return Reflect.construct(target as any, argArray, newTarget);
   }
 
   /**
@@ -58,29 +45,24 @@ export class FFIProxy<T extends { [key: string]: any }>
     target: ITargetConstructor<T>,
     libPath?: string
   ): TargetClassDecorator<T> {
-    log("Create", target.name, libPath);
+    log('Create', target.name, libPath);
 
     // tslint:disable-next-line:only-arrow-functions
     const f = function(...args: any[]): any {
       const instance = Reflect.construct(target, args);
+      Object.setPrototypeOf(instance, target.prototype);
 
       if (libPath === undefined) {
-        if (args.length === 0 || typeof args[0] !== "string") {
-          throw Error(
-            `Could not create '${target.name}' without valid library path`
-          );
+        if (args.length === 0 || typeof args[0] !== 'string') {
+          throw Error(`Could not create '${target.name}' without valid library path`);
         }
       }
 
       const descriptors = getMethodDescriptors(target, instance);
 
-      return new Proxy<T>(
-        instance,
-        new FFIProxy(descriptors, libPath || args[0])
-      );
+      return new Proxy<T>(instance, new FFIProxy(descriptors, libPath || args[0]));
     };
 
-    Object.setPrototypeOf(f, target.prototype);
     return f;
   }
 }

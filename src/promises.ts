@@ -1,6 +1,6 @@
-import * as ffi from "ffi";
-import "reflect-metadata";
-import { IPlugin } from "./plugins";
+import * as ffi from 'ffi-napi';
+import 'reflect-metadata';
+import { IPlugin } from './plugins';
 
 /**
  * Plugin to automatically call node-ffi async feature when function
@@ -10,8 +10,8 @@ export class PromisePlugin implements Partial<IPlugin> {
   private readonly wrapPromise: boolean;
 
   public constructor(target: object, method: string) {
-    const meta = Reflect.getMetadata("design:returntype", target, method);
-    this.wrapPromise = meta && meta.name === "Promise";
+    const meta = Reflect.getMetadata('design:returntype', target, method);
+    this.wrapPromise = meta && meta.name === 'Promise';
   }
 
   /**

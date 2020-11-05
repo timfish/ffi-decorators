@@ -2,7 +2,7 @@
   "name": "ffi-decorators",
   "description": "Use node-ffi via decorators",
   "author": "Tim Fish <tim@timfish.uk>",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "license": "MIT",
   "repository": "https://github.com/timfish/ffi-decorators.git",
   "main": "dist/index.js",
@@ -16,26 +16,27 @@
     "fix": "run-s fix:prettier fix:tslint",
     "fix:prettier": "prettier --write \"{src,test}/**/*.ts\"",
     "fix:tslint": "tslint --fix -t stylish --project ./tsconfig.json",
-    "test": "node-gyp rebuild --directory test && cross-env TS_NODE_PROJECT=tsconfig.json mocha --require ts-node/register/transpile-only ./test/**/*.ts"
+    "pretest": "yarn build && node-gyp rebuild --directory test",
+    "test": "cross-env TS_NODE_PROJECT=tsconfig.json mocha --require ts-node/register/transpile-only ./test/**/*.ts"
   },
   "dependencies": {
-    "debug": "^4.1.1",
+    "debug": "^4.2.0",
     "reflect-metadata": "^0.1.13"
   },
   "peerDependencies": {
-    "ffi": "^2.0.0"
+    "ffi-napi": "^3.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/debug": "^4.1.2",
-    "@types/ffi": "^0.1.0",
+    "@types/ffi-napi": "^2.4.1",
     "@types/mocha": "^5.2.6",
-    "@types/ref": "^0.0.28",
+    "@types/ref-napi": "^1.4.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "cross-env": "^5.2.0",
-    "ffi": "^2.3.0",
+    "ffi-napi": "^3.0.1",
     "mocha": "^6.0.2",
     "nan": "^2.12.1",
     "node-gyp": "^3.8.0",

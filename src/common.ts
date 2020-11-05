@@ -1,5 +1,5 @@
 // tslint:disable-next-line:no-implicit-dependencies
-import * as ref from "ref";
+import * as ref from 'ref-napi';
 
 /** Interface for target class constructor */
 export type ITargetConstructor<T> = new (path: string) => T;
@@ -11,7 +11,7 @@ export type TargetClassDecorator<T> = (target: ITargetConstructor<T>) => void;
  * proxying ever fails
  */
 export function never(): never {
-  throw new Error("This method should have been proxied");
+  throw new Error('This method should have been proxied');
 }
 
 /**

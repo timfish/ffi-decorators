@@ -1,11 +1,11 @@
-import "reflect-metadata";
-import { CallbackPlugin } from "./callbacks";
-import { ITargetConstructor, TargetClassDecorator } from "./common";
-import { IPluginConstructor } from "./plugins";
-import { PromisePlugin } from "./promises";
-import { FFIProxy } from "./proxy";
+import 'reflect-metadata';
+import { CallbackPlugin } from './callbacks';
+import { ITargetConstructor, TargetClassDecorator } from './common';
+import { IPluginConstructor } from './plugins';
+import { PromisePlugin } from './promises';
+import { FFIProxy } from './proxy';
 
-export const LIBRARY_META = "ffi-decorators:library-meta";
+export const LIBRARY_META = 'ffi-decorators:library-meta';
 
 /** Library decorator options */
 export interface ILibraryOptions {
@@ -30,9 +30,7 @@ export interface ILibraryOptions {
  * Used to automatically proxy native calls on the decorated class
  * @param options options
  */
-export function Library<T extends object>(
-  options: ILibraryOptions = {}
-): TargetClassDecorator<T> {
+export function Library<T extends object>(options: ILibraryOptions = {}): TargetClassDecorator<T> {
   return (target: ITargetConstructor<T>) => {
     options.plugins = options.plugins || [PromisePlugin, CallbackPlugin];
 

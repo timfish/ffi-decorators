@@ -1,4 +1,4 @@
-import { FFITypeList } from "./common";
+import { FFITypeList } from './common';
 
 export type PluginFunctionWrap = (...args: any[]) => PluginFunctionWrap;
 
@@ -25,10 +25,7 @@ export interface IPlugin {
 }
 
 /** Interface to type plugin constructors */
-export type IPluginConstructor = new (
-  target: object,
-  method: string
-) => Partial<IPlugin>;
+export type IPluginConstructor = new (target: object, method: string) => Partial<IPlugin>;
 
 /**
  * Aggregates plugins and simplifies calling their methods
@@ -41,9 +38,7 @@ export class PluginCollection {
 
   /** Gets plugin instances for the supplied method */
   public pluginsForMethod(method: string): IPlugin {
-    const plugins = this.pluginsConstructors.map(
-      p => new p(this.target, method)
-    );
+    const plugins = this.pluginsConstructors.map(p => new p(this.target, method));
 
     return {
       modifyMappings(mapping: FFITypeList): void {
@@ -62,8 +57,7 @@ export class PluginCollection {
       },
       wrapFunction(funcNative: PluginFunctionWrap): PluginFunctionWrap {
         return plugins.reduce(
-          (func, plugin) =>
-            plugin.wrapFunction ? plugin.wrapFunction(func) : func,
+          (func, plugin) => (plugin.wrapFunction ? plugin.wrapFunction(func) : func),
           funcNative as (...args: any[]) => any
         );
       }

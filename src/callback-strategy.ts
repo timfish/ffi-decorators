@@ -1,28 +1,21 @@
-import * as ffi from "ffi";
-import { FFITypeList } from "./common";
+import * as ffi from 'ffi-napi';
+import { FFITypeList } from './common';
 
 /** Return the correct calling convention on Win32 */
 export function stdCallOnWin32(): number | undefined {
-  return process.platform === "win32" && process.arch === "ia32"
+  return process.platform === 'win32' && process.arch === 'ia32'
     ? (ffi as any).FFI_STDCALL
     : undefined;
 }
 
 /** Base callback strategy */
 export abstract class CallbackStrategy {
-  public constructor(
-    public types: FFITypeList,
-    private readonly abi: number | undefined
-  ) {}
+  public constructor(public types: FFITypeList, private readonly abi: number | undefined) {}
 
-  protected getWrappedCallback(
-    scope: any,
-    func: (...args: any[]) => any
-  ): Buffer {
+  protected getWrappedCallback(scope: any, func: (...args: any[]) => any): Buffer {
     const [ret, param] = this.types;
 
-    const abi =
-      this.abi === undefined ? (ffi as any).FFI_DEFAULT_ABI : this.abi;
+    const abi = this.abi === undefined ? (ffi as any).FFI_DEFAULT_ABI : this.abi;
 
     // tslint:disable-next-line:only-arrow-functions
     return ffi.Callback(ret, param, abi, function(...args: any[]): any {

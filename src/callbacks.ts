@@ -1,11 +1,11 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 import {
   CallbackStrategy,
   ICallbackStrategyConstructor,
   ReplaceStrategy
-} from "./callback-strategy";
-import { FFITypeList } from "./common";
-import { IPlugin, PluginFunctionWrap } from "./plugins";
+} from './callback-strategy';
+import { FFITypeList } from './common';
+import { IPlugin, PluginFunctionWrap } from './plugins';
 
 // tsl
 const CALLBACK_META = (i: number) => `ffi-decorators:callback-meta:${i}`;
@@ -46,10 +46,7 @@ export function Callback(options: ICallbackOptions): ParameterDecorator {
  */
 export class CallbackPlugin implements Partial<IPlugin> {
   private readonly strategies: (CallbackStrategy | undefined)[] = [];
-  public constructor(
-    private readonly target: object,
-    private readonly method: string
-  ) {}
+  public constructor(private readonly target: object, private readonly method: string) {}
 
   /**
    * @inheritDoc
@@ -69,7 +66,7 @@ export class CallbackPlugin implements Partial<IPlugin> {
         // save the strategy for
         this.strategies[i] = new strategyType(options.types, options.abi);
         // ensure ffi is told this is a pointer type
-        mapping[1][i] = "pointer";
+        mapping[1][i] = 'pointer';
       }
     }
   }

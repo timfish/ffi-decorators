@@ -1,6 +1,6 @@
-import { FFITypeList } from "./common";
+import { FFITypeList } from './common';
 
-export const METHOD_META = "ffi-decorators:method-meta";
+export const METHOD_META = 'ffi-decorators:method-meta';
 
 /** Method decorator options */
 export interface IMethodOptions {
@@ -24,16 +24,8 @@ export interface IMethodOptions {
  */
 export function Method(
   options: IMethodOptions
-): (
-  target: object,
-  key: string,
-  descriptor: PropertyDescriptor
-) => PropertyDescriptor {
-  return (
-    target: { [key: string]: any },
-    key: string,
-    descriptor: PropertyDescriptor
-  ) => {
+): (target: object, key: string, descriptor: PropertyDescriptor) => PropertyDescriptor {
+  return (target: { [key: string]: any }, key: string, descriptor: PropertyDescriptor) => {
     options.nativeName = options.nativeName || key;
     Reflect.defineMetadata(METHOD_META, options, target, key);
     return descriptor;

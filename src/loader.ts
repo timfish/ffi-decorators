@@ -1,17 +1,14 @@
-import * as debug from "debug";
-import * as ffi from "ffi";
-import "reflect-metadata";
-import { FFITypeList, ITargetConstructor } from "./common";
-import { ILibraryOptions, LIBRARY_META } from "./library";
-import { IMethodOptions, METHOD_META } from "./method";
-import { PluginCollection } from "./plugins";
+import * as debug from 'debug';
+import * as ffi from 'ffi-napi';
+import 'reflect-metadata';
+import { FFITypeList, ITargetConstructor } from './common';
+import { ILibraryOptions, LIBRARY_META } from './library';
+import { IMethodOptions, METHOD_META } from './method';
+import { PluginCollection } from './plugins';
 
-const log = debug("ffi-decorators:loader");
+const log = debug('ffi-decorators:loader');
 
-export type WrapMethod = (
-  native: { [method: string]: ffi.ForeignFunction },
-  args: any[]
-) => any;
+export type WrapMethod = (native: { [method: string]: ffi.ForeignFunction }, args: any[]) => any;
 
 /** Method wrapping descriptors */
 export interface IMethodDescriptors {
@@ -37,12 +34,9 @@ export function getMethodDescriptors<T extends object>(
     proxyMethods: new Map()
   };
 
-  const libraryMeta: Required<ILibraryOptions> = Reflect.getMetadata(
-    LIBRARY_META,
-    target
-  );
+  const libraryMeta: Required<ILibraryOptions> = Reflect.getMetadata(LIBRARY_META, target);
 
-  log("Library meta", libraryMeta);
+  log('Library meta', libraryMeta);
 
   const jsFunctions = getDecoratedMethods(instance);
   const pluginLoader = new PluginCollection(instance, libraryMeta.plugins);
@@ -56,7 +50,7 @@ export function getMethodDescriptors<T extends object>(
       jsFuncName
     );
 
-    log("Method meta", jsFuncName, methodMeta);
+    log('Method meta', jsFuncName, methodMeta);
 
     // Plugins can modify the ffi mappings
     plugins.modifyMappings(methodMeta.types);
@@ -82,20 +76,22 @@ export function getMethodDescriptors<T extends object>(
 
 function getDecoratedMethods(obj: any): string[] {
   const out: string[] = [];
+  let curr = obj;
 
-  const methodNames = Object.getOwnPropertyNames(
-    Object.getPrototypeOf(obj)
-  ).filter(m => m !== "constructor");
+  do {
+    const props = Object.getOwnPropertyNames(curr);
+    props.forEach(prop => {
+      if (
+        out.indexOf(prop) === -1 &&
+        typeof obj[prop] === 'function' &&
+        Reflect.getMetadata(METHOD_META, obj, prop)
+      ) {
+        out.push(prop);
+      }
+    });
+    // tslint:disable-next-line:no-conditional-assignment
+  } while ((curr = Object.getPrototypeOf(curr)));
 
-  for (const func of methodNames) {
-    if (
-      func &&
-      typeof obj[func] === "function" &&
-      Reflect.getMetadata(METHOD_META, obj, func)
-    ) {
-      log("Found metadata for method:", func);
-      out.push(func);
-    }
-  }
+  log('Found methods: ', out);
   return out;
 }
